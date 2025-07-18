@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -16,9 +14,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.scarpanti.app.playqueue.controller.GenreController;
 import com.scarpanti.app.playqueue.controller.PlayQueueController;
@@ -47,13 +44,12 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 	private JButton addToQueueButton;
 	private JScrollPane songScrollPane;
 
-	private transient GenreController genreController;
 	private transient SongController songController;
 	private transient PlayQueueController playQueueController;
 
 	public PlayQueueSwingView() {
 		setTitle("PlayQueue");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -105,11 +101,8 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		playNextButton = new JButton("Play Next");
 		playNextButton.setName("playNextButton");
 		playNextButton.setEnabled(false);
-		playNextButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				playQueueController.onPlayNext();
-			}
+		playNextButton.addActionListener(e -> {
+			playQueueController.onPlayNext();
 		});
 		GridBagConstraints gbc_playNextButton = new GridBagConstraints();
 		gbc_playNextButton.fill = GridBagConstraints.BOTH;
@@ -121,12 +114,9 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		removeSelectedButton = new JButton("Remove Selected");
 		removeSelectedButton.setName("removeSelectedButton");
 		removeSelectedButton.setEnabled(false);
-		removeSelectedButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Song selectedSong = playQueueList.getSelectedValue();
-				playQueueController.onSongRemoved(selectedSong);
-			}
+		removeSelectedButton.addActionListener(e -> {
+			Song selectedSong = playQueueList.getSelectedValue();
+			playQueueController.onSongRemoved(selectedSong);
 		});
 		GridBagConstraints gbc_removeSelectedButton = new GridBagConstraints();
 		gbc_removeSelectedButton.fill = GridBagConstraints.BOTH;
@@ -163,13 +153,10 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		gbc_genreScrollPane.gridy = 2;
 		contentPane.add(genreScrollPane, gbc_genreScrollPane);
 
-		genreList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (!e.getValueIsAdjusting()) {
-					Genre selectedGenre = genreList.getSelectedValue();
-					songController.onGenreSelected(selectedGenre);
-				}
+		genreList.addListSelectionListener(e -> {
+			if (!e.getValueIsAdjusting()) {
+				Genre selectedGenre = genreList.getSelectedValue();
+				songController.onGenreSelected(selectedGenre);
 			}
 		});
 
@@ -198,12 +185,10 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		addToQueueButton = new JButton("Add to Queue");
 		addToQueueButton.setName("addToPlayQueueButton");
 		addToQueueButton.setEnabled(false);
-		addToQueueButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Song selectedSong = songList.getSelectedValue();
-				playQueueController.onSongSelected(selectedSong);
-			}
+		addToQueueButton.addActionListener(e -> {
+			Song selectedSong = songList.getSelectedValue();
+			playQueueController.onSongSelected(selectedSong);
+
 		});
 		songPanel.add(addToQueueButton, BorderLayout.SOUTH);
 
@@ -222,8 +207,7 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 	}
 
 	public void setGenreController(GenreController genreController) {
-		this.genreController = genreController;
-		this.genreController.loadGenres();
+		genreController.loadGenres();
 	}
 
 	public void setSongController(SongController songController) {

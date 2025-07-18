@@ -44,9 +44,8 @@ public class PlayQueueController {
 	}
 
 	public void getPlayQueue() {
-		List<Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
-			return playQueueRepo.getAllSongs();
-		});
+		List<Song> songs = transactionManager
+				.doInTransaction((genreRepo, songRepo, playQueueRepo) -> playQueueRepo.getAllSongs());
 
 		playQueueView.showQueue(songs);
 	}

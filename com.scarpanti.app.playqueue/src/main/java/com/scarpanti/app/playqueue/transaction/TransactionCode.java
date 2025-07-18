@@ -5,6 +5,5 @@ import com.scarpanti.app.playqueue.repository.PlayQueueRepository;
 import com.scarpanti.app.playqueue.repository.SongRepository;
 
 public interface TransactionCode<T> {
-	T execute(GenreRepository genreRepository, SongRepository songRepository, PlayQueueRepository playQueueRepository)
-			throws Exception;
+	T execute(GenreRepository genreRepository, SongRepository songRepository, PlayQueueRepository playQueueRepository);
 }

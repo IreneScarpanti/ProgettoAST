@@ -17,9 +17,8 @@ public class GenreController {
 	}
 
 	public void loadGenres() {
-		List<Genre> genres = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
-			return genreRepo.getAllGenres();
-		});
+		List<Genre> genres = transactionManager
+				.doInTransaction((genreRepo, songRepo, playQueueRepo) -> genreRepo.getAllGenres());
 
 		playQueueView.showGenres(genres);
 	}

@@ -19,9 +19,8 @@ public class SongController {
 	}
 
 	public void onGenreSelected(Genre genre) {
-		List<Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
-			return songRepo.getSongsByGenre(genre);
-		});
+		List<Song> songs = transactionManager
+				.doInTransaction((genreRepo, songRepo, playQueueRepo) -> songRepo.getSongsByGenre(genre));
 
 		playQueueView.showSongs(songs);
 	}
