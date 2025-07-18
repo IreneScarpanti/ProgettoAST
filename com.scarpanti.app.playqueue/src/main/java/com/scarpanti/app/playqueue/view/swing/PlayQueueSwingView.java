@@ -44,7 +44,7 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 
 	private JList<Song> songList;
 	private DefaultListModel<Song> songListModel;
-	private JButton addToPlayQueueButton;
+	private JButton addToQueueButton;
 	private JScrollPane songScrollPane;
 
 	private transient GenreController genreController;
@@ -108,9 +108,7 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		playNextButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (playQueueController != null) {
-					playQueueController.onPlayNext();
-				}
+				playQueueController.onPlayNext();
 			}
 		});
 		GridBagConstraints gbc_playNextButton = new GridBagConstraints();
@@ -126,12 +124,8 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		removeSelectedButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (playQueueController != null) {
-					Song selectedSong = playQueueList.getSelectedValue();
-					if (selectedSong != null) {
-						playQueueController.onSongRemoved(selectedSong);
-					}
-				}
+				Song selectedSong = playQueueList.getSelectedValue();
+				playQueueController.onSongRemoved(selectedSong);
 			}
 		});
 		GridBagConstraints gbc_removeSelectedButton = new GridBagConstraints();
@@ -139,15 +133,8 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		gbc_removeSelectedButton.gridx = 1;
 		gbc_removeSelectedButton.gridy = 0;
 		playQueueButtonPanel.add(removeSelectedButton, gbc_removeSelectedButton);
-		playQueueList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (!e.getValueIsAdjusting()) {
-					boolean queueSongSelected = playQueueList.getSelectedValue() != null;
-					removeSelectedButton.setEnabled(queueSongSelected);
-				}
-			}
-		});
+
+		playQueueList.addListSelectionListener(arg0 -> checkButtonsEnabled());
 
 		JLabel lblMusicLibrary = new JLabel("Music Library");
 		GridBagConstraints gbc_lblMusicLibrary = new GridBagConstraints();
@@ -175,14 +162,13 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		gbc_genreScrollPane.gridx = 1;
 		gbc_genreScrollPane.gridy = 2;
 		contentPane.add(genreScrollPane, gbc_genreScrollPane);
+
 		genreList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
 					Genre selectedGenre = genreList.getSelectedValue();
-					if (selectedGenre != null && songController != null) {
-						songController.onGenreSelected(selectedGenre);
-					}
+					songController.onGenreSelected(selectedGenre);
 				}
 			}
 		});
@@ -209,53 +195,39 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		songScrollPane = new JScrollPane(songList);
 		songPanel.add(songScrollPane, BorderLayout.CENTER);
 
-		addToPlayQueueButton = new JButton("Add to Queue");
-		addToPlayQueueButton.setName("addToPlayQueueButton");
-		addToPlayQueueButton.setEnabled(false);
-		addToPlayQueueButton.addActionListener(new ActionListener() {
+		addToQueueButton = new JButton("Add to Queue");
+		addToQueueButton.setName("addToPlayQueueButton");
+		addToQueueButton.setEnabled(false);
+		addToQueueButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (playQueueController != null) {
-					Song selectedSong = songList.getSelectedValue();
-					if (selectedSong != null) {
-						playQueueController.onSongSelected(selectedSong);
-					}
-				}
+				Song selectedSong = songList.getSelectedValue();
+				playQueueController.onSongSelected(selectedSong);
 			}
 		});
-		songPanel.add(addToPlayQueueButton, BorderLayout.SOUTH);
-		songList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (!e.getValueIsAdjusting()) {
-					boolean songSelected = songList.getSelectedValue() != null;
-					addToPlayQueueButton.setEnabled(songSelected);
-				}
-			}
-		});
+		songPanel.add(addToQueueButton, BorderLayout.SOUTH);
+
+		songList.addListSelectionListener(arg0 -> checkButtonsEnabled());
 	}
 
-	public GenreController getGenreController() {
-		return genreController;
+	private void checkButtonsEnabled() {
+		boolean songSelected = songList.getSelectedValue() != null;
+		addToQueueButton.setEnabled(songSelected);
+
+		boolean queueSongSelected = playQueueList.getSelectedValue() != null;
+		removeSelectedButton.setEnabled(queueSongSelected);
+
+		boolean queueNotEmpty = playQueueListModel.getSize() > 0;
+		playNextButton.setEnabled(queueNotEmpty);
 	}
 
 	public void setGenreController(GenreController genreController) {
 		this.genreController = genreController;
-		if (genreController != null) {
-			genreController.loadGenres();
-		}
-	}
-
-	public SongController getSongController() {
-		return songController;
+		this.genreController.loadGenres();
 	}
 
 	public void setSongController(SongController songController) {
 		this.songController = songController;
-	}
-
-	public PlayQueueController getPlayQueueController() {
-		return playQueueController;
 	}
 
 	public void setPlayQueueController(PlayQueueController playQueueController) {
@@ -272,17 +244,12 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 	public void showSongs(List<Song> songs) {
 		songListModel.clear();
 		songs.forEach(songListModel::addElement);
-		boolean songSelected = songList.getSelectedValue() != null;
-		addToPlayQueueButton.setEnabled(songSelected);
 	}
 
 	@Override
 	public void showQueue(List<Song> songs) {
 		playQueueListModel.clear();
 		songs.forEach(playQueueListModel::addElement);
-		boolean queueNotEmpty = playQueueListModel.getSize() > 0;
-		playNextButton.setEnabled(queueNotEmpty);
-		boolean queueSongSelected = playQueueList.getSelectedValue() != null;
-		removeSelectedButton.setEnabled(queueSongSelected);
+		checkButtonsEnabled();
 	}
 }

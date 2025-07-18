@@ -1,5 +1,6 @@
 package com.scarpanti.app.playqueue.view.swing;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
@@ -65,7 +66,7 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 
 		window.label(JLabelMatcher.withText("Play Queue"));
 		window.list("playQueueList").requireEnabled();
-		window.button("playNextButton").requireDisabled(); 
+		window.button("playNextButton").requireDisabled();
 		window.button("removeSelectedButton").requireDisabled();
 
 		window.label(JLabelMatcher.withText("Music Library"));
@@ -81,7 +82,7 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	@GUITest
-	public void testAddToQueueButtonEnabledWhenSongSelected() {
+	public void testAddToPlayQueueButtonEnabledWhenSongSelected() {
 		Genre rock = new Genre("Rock", "Rock music");
 		Song song1 = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
 		Song song2 = new Song(2L, "Stairway to Heaven", "Led Zeppelin", 482, rock);
@@ -97,7 +98,7 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	@GUITest
-	public void testAddToQueueButtonDisabledWhenNoSongSelected() {
+	public void testAddToPlayQueueButtonDisabledWhenNoSongSelected() {
 		Genre rock = new Genre("Rock", "Rock music");
 		Song song1 = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
 
@@ -228,4 +229,44 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 
 		verify(songController).onGenreSelected(rock);
 	}
+
+	@Test
+	@GUITest
+	public void testShowGenres() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Genre jazz = new Genre("Jazz", "Jazz music");
+
+		GuiActionRunner.execute(() -> {
+			view.showGenres(Arrays.asList(rock, jazz));
+		});
+
+		assertThat(window.list("genreList").contents()).containsExactly(rock.toString(), jazz.toString());
+	}
+
+	@Test
+	@GUITest
+	public void testShowSongs() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+
+		GuiActionRunner.execute(() -> {
+			view.showSongs(Arrays.asList(song));
+		});
+
+		assertThat(window.list("songList").contents()).containsExactly(song.toString());
+	}
+
+	@Test
+	@GUITest
+	public void testShowQueue() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+
+		GuiActionRunner.execute(() -> {
+			view.showQueue(Arrays.asList(song));
+		});
+
+		assertThat(window.list("playQueueList").contents()).containsExactly(song.toString());
+	}
+
 }
