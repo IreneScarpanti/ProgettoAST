@@ -11,4 +11,6 @@ public interface PlayQueueView {
 
 	void showSongs(List<Song> rockSongs);
 
+	void showQueue(List<Song> songs);
+
 }
