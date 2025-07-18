@@ -20,7 +20,7 @@ public class SongController {
 
 	public void onGenreSelected(Genre genre) {
 		List<Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
-			return songRepo.findByGenre(genre);
+			return songRepo.getSongsByGenre(genre);
 		});
 
 		playQueueView.showSongs(songs);

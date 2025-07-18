@@ -7,6 +7,6 @@ import com.scarpanti.app.playqueue.model.Song;
 
 public interface SongRepository {
 
-	List<Song> findByGenre(Genre rock);
+	List<Song> getSongsByGenre(Genre rock);
 
 }

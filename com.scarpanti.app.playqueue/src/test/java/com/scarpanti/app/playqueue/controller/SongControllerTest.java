@@ -55,27 +55,27 @@ public class SongControllerTest {
 	@Test
 	public void testLoadSongsByGenre() {
 		List<Song> rockSongs = Arrays.asList(BOHEMIAN_RHAPSODY, STAIRWAY_TO_HEAVEN);
-		when(songRepository.findByGenre(ROCK)).thenReturn(rockSongs);
+		when(songRepository.getSongsByGenre(ROCK)).thenReturn(rockSongs);
 
 		controller.onGenreSelected(ROCK);
 
 
 		InOrder inOrder = inOrder(transactionManager, songRepository, playQueueView);
 		inOrder.verify(transactionManager).doInTransaction(Mockito.<TransactionCode<?>>any());
-		inOrder.verify(songRepository).findByGenre(ROCK);
+		inOrder.verify(songRepository).getSongsByGenre(ROCK);
 		inOrder.verify(playQueueView).showSongs(rockSongs);
 	}
 
 	@Test
 	public void testLoadSongsByGenreWhenEmpty() {
 		List<Song> emptySongs = Collections.emptyList();
-		when(songRepository.findByGenre(JAZZ)).thenReturn(emptySongs);
+		when(songRepository.getSongsByGenre(JAZZ)).thenReturn(emptySongs);
 
 		controller.onGenreSelected(JAZZ);
 
 		InOrder inOrder = inOrder(transactionManager, songRepository, playQueueView);
 		inOrder.verify(transactionManager).doInTransaction(Mockito.<TransactionCode<?>>any());
-		inOrder.verify(songRepository).findByGenre(JAZZ);
+		inOrder.verify(songRepository).getSongsByGenre(JAZZ);
 		inOrder.verify(playQueueView).showSongs(emptySongs);
 	}
 
