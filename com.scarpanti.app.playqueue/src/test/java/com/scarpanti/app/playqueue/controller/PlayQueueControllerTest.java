@@ -103,6 +103,7 @@ public class PlayQueueControllerTest {
 		inOrder.verify(playQueueView).showQueue(currentQueue);
 	}
 
+	@Test
 	public void testClearQueue() {
 		Map<Long, Song> emptyQueue = Map.of();
 		when(playQueueRepository.getAllSongs()).thenReturn(emptyQueue);
