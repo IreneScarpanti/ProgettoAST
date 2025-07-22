@@ -103,4 +103,17 @@ public class PlayQueueControllerTest {
 		inOrder.verify(playQueueView).showQueue(currentQueue);
 	}
 
+	public void testClearQueue() {
+		Map<Long, Song> emptyQueue = Map.of();
+		when(playQueueRepository.getAllSongs()).thenReturn(emptyQueue);
+
+		controller.clearQueue();
+
+		InOrder inOrder = inOrder(transactionManager, playQueueRepository, playQueueView);
+		inOrder.verify(transactionManager).doInTransaction(Mockito.<TransactionCode<?>>any());
+		inOrder.verify(playQueueRepository).clear();
+		inOrder.verify(playQueueRepository).getAllSongs();
+		inOrder.verify(playQueueView).showQueue(emptyQueue);
+	}
+
 }

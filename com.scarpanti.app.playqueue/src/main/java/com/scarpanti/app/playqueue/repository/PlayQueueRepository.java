@@ -14,4 +14,6 @@ public interface PlayQueueRepository {
 
 	void remove(Long queueId);
 
+	void clear();
+
 }
