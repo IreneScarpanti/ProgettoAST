@@ -16,7 +16,8 @@ public class PlayQueueController {
 	}
 
 	public void onSongSelected(Song song) {
-		Map<Long, Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
+		Map<Long, Song> songs = transactionManager
+				.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
 			playQueueRepo.enqueue(song);
 			return playQueueRepo.getAllSongs();
 		});
@@ -25,7 +26,8 @@ public class PlayQueueController {
 	}
 
 	public void onPlayNext() {
-		Map<Long, Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
+		Map<Long, Song> songs = transactionManager
+				.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
 			playQueueRepo.dequeue();
 			return playQueueRepo.getAllSongs();
 		});
@@ -34,10 +36,18 @@ public class PlayQueueController {
 	}
 
 	public void onSongRemoved(Long queueId) {
-		Map<Long, Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
+		Map<Long, Song> songs = transactionManager
+				.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
 			playQueueRepo.remove(queueId);
 			return playQueueRepo.getAllSongs();
 		});
+
+		playQueueView.showQueue(songs);
+	}
+
+	public void getPlayQueue() {
+		Map<Long, Song> songs = transactionManager
+				.doInTransaction((genreRepo, songRepo, playQueueRepo) -> playQueueRepo.getAllSongs());
 
 		playQueueView.showQueue(songs);
 	}

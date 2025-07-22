@@ -90,4 +90,17 @@ public class PlayQueueControllerTest {
 		inOrder.verify(playQueueView).showQueue(songsAfterRemoval);
 	}
 
+	@Test
+	public void testGetPlayQueue() {
+		Map<Long, Song> currentQueue = Map.of(1L, BOHEMIAN_RHAPSODY, 2L, STAIRWAY_TO_HEAVEN);
+		when(playQueueRepository.getAllSongs()).thenReturn(currentQueue);
+
+		controller.getPlayQueue();
+
+		InOrder inOrder = inOrder(transactionManager, playQueueRepository, playQueueView);
+		inOrder.verify(transactionManager).doInTransaction(Mockito.<TransactionCode<?>>any());
+		inOrder.verify(playQueueRepository).getAllSongs();
+		inOrder.verify(playQueueView).showQueue(currentQueue);
+	}
+
 }
