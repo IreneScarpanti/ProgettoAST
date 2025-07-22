@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +59,20 @@ public class PlayQueueControllerTest {
 		inOrder.verify(playQueueRepository).enqueue(BOHEMIAN_RHAPSODY);
 		inOrder.verify(playQueueRepository).getAllSongs();
 		inOrder.verify(playQueueView).showQueue(Arrays.asList(BOHEMIAN_RHAPSODY));
+	}
+
+	@Test
+	public void testOnPlayNext() {
+		List<Song> songsAfterDequeue = Arrays.asList(BOHEMIAN_RHAPSODY);
+		when(playQueueRepository.getAllSongs()).thenReturn(songsAfterDequeue);
+
+		controller.onPlayNext();
+
+		InOrder inOrder = inOrder(transactionManager, playQueueRepository, playQueueView);
+		inOrder.verify(transactionManager).doInTransaction(Mockito.<TransactionCode<?>>any());
+		inOrder.verify(playQueueRepository).dequeue();
+		inOrder.verify(playQueueRepository).getAllSongs();
+		inOrder.verify(playQueueView).showQueue(songsAfterDequeue);
 	}
 
 }

@@ -10,4 +10,6 @@ public interface PlayQueueRepository {
 
 	void enqueue(Song song);
 
+	void dequeue();
+
 }

@@ -23,4 +23,13 @@ public class PlayQueueController {
 
 		playQueueView.showQueue(songs);
 	}
+
+	public void onPlayNext() {
+		List<Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
+			playQueueRepo.dequeue();
+			return playQueueRepo.getAllSongs();
+		});
+
+		playQueueView.showQueue(songs);
+	}
 }
