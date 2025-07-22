@@ -11,4 +11,6 @@ public interface PlayQueueView {
 
 	void showSongs(List<Song> songs);
 
+	void showQueue(List<Song> songsInQueue);
+
 }
