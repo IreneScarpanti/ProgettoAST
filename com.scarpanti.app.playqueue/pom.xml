@@ -18,8 +18,10 @@
     <coveralls.version>4.5.0-M6</coveralls.version>
     <mockito.version>4.11.0</mockito.version>
     <surefire-report.version>3.5.3</surefire-report.version>
+    <hibernate.version>5.6.15.Final</hibernate.version>
     
-    <sonar.coverage.exclusions>**/model/*.*</sonar.coverage.exclusions>
+    <sonar.coverage.exclusions>**/model/*.*,**/entity/*.*</sonar.coverage.exclusions>
+    <sonar.cpd.exclusions>**/entity/**</sonar.cpd.exclusions>
     
     <sonar.junit.reportPaths>
       ${project.build.directory}/surefire-reports
@@ -27,6 +29,11 @@
   </properties>
   
   <dependencies>
+     <dependency>
+       <groupId>org.hibernate</groupId>
+       <artifactId>hibernate-core</artifactId>
+       <version>${hibernate.version}</version>
+     </dependency>
      <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -62,6 +69,7 @@
           <configuration>
             <excludes>
               <exclude>**/model/*.*</exclude>
+              <exclude>**/entity/*.*</exclude>
             </excludes>
           </configuration>
           <executions>
