@@ -31,3 +31,9 @@ jobs:
       - name: Build with Maven
         run: xvfb-run mvn verify -Pmutation-testing
         working-directory: com.scarpanti.app.playqueue
+
+      - name: Archive PIT Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: PIT-Report
+          path: '**/target/pit-reports'
