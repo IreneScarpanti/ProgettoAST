@@ -19,6 +19,9 @@
     <mockito.version>4.11.0</mockito.version>
     <surefire-report.version>3.5.3</surefire-report.version>
     <hibernate.version>5.6.15.Final</hibernate.version>
+    <testcontainers.version>1.21.0</testcontainers.version>
+    <mysql.version>8.0.33</mysql.version>
+    <logback.version>1.2.13</logback.version>
     
     <sonar.coverage.exclusions>**/model/*.*,**/entity/*.*</sonar.coverage.exclusions>
     <sonar.cpd.exclusions>**/entity/**</sonar.cpd.exclusions>
@@ -51,6 +54,29 @@
       <artifactId>mockito-core</artifactId>
       <version>${mockito.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>${mysql.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>mysql</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
     </dependency>
   </dependencies>
   
