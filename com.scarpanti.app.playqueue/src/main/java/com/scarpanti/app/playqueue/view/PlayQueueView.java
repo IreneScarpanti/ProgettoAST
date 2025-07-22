@@ -9,6 +9,6 @@ public interface PlayQueueView {
 
 	void showGenres(List<Genre> genres);
 
-	void showSongs(List<Song> rockSongs);
+	void showSongs(List<Song> songs);
 
 }
