@@ -1,15 +1,17 @@
 package com.scarpanti.app.playqueue.repository;
 
-import java.util.List;
+import java.util.Map;
 
 import com.scarpanti.app.playqueue.model.Song;
 
 public interface PlayQueueRepository {
 
-	List<Song> getAllSongs();
+	Map<Long, Song> getAllSongs();
 
 	void enqueue(Song song);
 
 	void dequeue();
+
+	void remove(Long queueId);
 
 }

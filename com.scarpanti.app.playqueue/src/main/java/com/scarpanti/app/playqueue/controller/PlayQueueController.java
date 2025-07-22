@@ -1,6 +1,6 @@
 package com.scarpanti.app.playqueue.controller;
 
-import java.util.List;
+import java.util.Map;
 
 import com.scarpanti.app.playqueue.model.Song;
 import com.scarpanti.app.playqueue.transaction.TransactionManager;
@@ -16,7 +16,7 @@ public class PlayQueueController {
 	}
 
 	public void onSongSelected(Song song) {
-		List<Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
+		Map<Long, Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
 			playQueueRepo.enqueue(song);
 			return playQueueRepo.getAllSongs();
 		});
@@ -25,8 +25,17 @@ public class PlayQueueController {
 	}
 
 	public void onPlayNext() {
-		List<Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
+		Map<Long, Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
 			playQueueRepo.dequeue();
+			return playQueueRepo.getAllSongs();
+		});
+
+		playQueueView.showQueue(songs);
+	}
+
+	public void onSongRemoved(Long queueId) {
+		Map<Long, Song> songs = transactionManager.doInTransaction((genreRepo, songRepo, playQueueRepo) -> {
+			playQueueRepo.remove(queueId);
 			return playQueueRepo.getAllSongs();
 		});
 

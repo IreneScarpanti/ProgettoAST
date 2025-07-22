@@ -4,8 +4,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +24,7 @@ public class PlayQueueControllerTest {
 
 	private static final Genre ROCK = new Genre("Rock", "Rock music");
 	private static final Song BOHEMIAN_RHAPSODY = new Song(1L, "Bohemian Rhapsody", "Queen", 354, ROCK);
+	private static final Song STAIRWAY_TO_HEAVEN = new Song(2L, "Stairway To Heaven", "Led Zeppelin", 482, ROCK);
 
 	private GenreRepository genreRepository;
 	private SongRepository songRepository;
@@ -51,19 +51,20 @@ public class PlayQueueControllerTest {
 
 	@Test
 	public void testOnSongSelectedShouldEnqueueSongAndShowQueue() {
-		when(playQueueRepository.getAllSongs()).thenReturn(Arrays.asList(BOHEMIAN_RHAPSODY));
+		Map<Long, Song> songsInQueue = Map.of(1L, BOHEMIAN_RHAPSODY);
+		when(playQueueRepository.getAllSongs()).thenReturn(songsInQueue);
 
 		controller.onSongSelected(BOHEMIAN_RHAPSODY);
 
 		InOrder inOrder = inOrder(playQueueRepository, playQueueView);
 		inOrder.verify(playQueueRepository).enqueue(BOHEMIAN_RHAPSODY);
 		inOrder.verify(playQueueRepository).getAllSongs();
-		inOrder.verify(playQueueView).showQueue(Arrays.asList(BOHEMIAN_RHAPSODY));
+		inOrder.verify(playQueueView).showQueue(songsInQueue);
 	}
 
 	@Test
 	public void testOnPlayNext() {
-		List<Song> songsAfterDequeue = Arrays.asList(BOHEMIAN_RHAPSODY);
+		Map<Long, Song> songsAfterDequeue = Map.of(1L, STAIRWAY_TO_HEAVEN);
 		when(playQueueRepository.getAllSongs()).thenReturn(songsAfterDequeue);
 
 		controller.onPlayNext();
@@ -73,6 +74,20 @@ public class PlayQueueControllerTest {
 		inOrder.verify(playQueueRepository).dequeue();
 		inOrder.verify(playQueueRepository).getAllSongs();
 		inOrder.verify(playQueueView).showQueue(songsAfterDequeue);
+	}
+
+	@Test
+	public void testOnSongRemoved() {
+		Map<Long, Song> songsAfterRemoval = Map.of(1L, STAIRWAY_TO_HEAVEN);
+		when(playQueueRepository.getAllSongs()).thenReturn(songsAfterRemoval);
+
+		controller.onSongRemoved(2L);
+
+		InOrder inOrder = inOrder(transactionManager, playQueueRepository, playQueueView);
+		inOrder.verify(transactionManager).doInTransaction(Mockito.<TransactionCode<?>>any());
+		inOrder.verify(playQueueRepository).remove(2L);
+		inOrder.verify(playQueueRepository).getAllSongs();
+		inOrder.verify(playQueueView).showQueue(songsAfterRemoval);
 	}
 
 }

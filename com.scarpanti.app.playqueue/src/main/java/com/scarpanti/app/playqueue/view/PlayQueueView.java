@@ -1,6 +1,7 @@
 package com.scarpanti.app.playqueue.view;
 
 import java.util.List;
+import java.util.Map;
 
 import com.scarpanti.app.playqueue.model.Genre;
 import com.scarpanti.app.playqueue.model.Song;
@@ -11,6 +12,6 @@ public interface PlayQueueView {
 
 	void showSongs(List<Song> songs);
 
-	void showQueue(List<Song> songsInQueue);
+	void showQueue(Map<Long, Song> songs);
 
 }
