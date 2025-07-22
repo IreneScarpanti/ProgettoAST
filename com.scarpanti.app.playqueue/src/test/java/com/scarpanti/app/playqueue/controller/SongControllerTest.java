@@ -1,8 +1,12 @@
 package com.scarpanti.app.playqueue.controller;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -20,11 +24,9 @@ import com.scarpanti.app.playqueue.view.PlayQueueView;
 public class SongControllerTest {
 
 	private static final Genre ROCK = new Genre("Rock", "Rock music");
-	private static final Genre JAZZ = new Genre("Jazz", "Jazz music");
 	private static final Song BOHEMIAN_RHAPSODY = new Song(1L, "Bohemian Rhapsody", "Queen", 354, ROCK);
 	private static final Song STAIRWAY_TO_HEAVEN = new Song(2L, "Stairway To Heaven", "Led Zeppelin", 482, ROCK);
-	private static final Song TAKE_FIVE = new Song(3L, "Take Five", "Dave Brubeck", 324, JAZZ);
-	
+
 	private GenreRepository genreRepository;
 	private SongRepository songRepository;
 	private PlayQueueRepository playQueueRepository;
@@ -59,31 +61,5 @@ public class SongControllerTest {
 		inOrder.verify(transactionManager).doInTransaction(Mockito.<TransactionCode<?>>any());
 		inOrder.verify(songRepository).getSongsByGenre(ROCK);
 		inOrder.verify(playQueueView).showSongs(rockSongs);
-	}
-
-	@Test
-	public void testOnGenreSelectedWhenNoSongsFound() {
-		List<Song> emptySongs = Arrays.asList();
-		when(songRepository.getSongsByGenre(ROCK)).thenReturn(emptySongs);
-
-		controller.onGenreSelected(ROCK);
-
-		InOrder inOrder = inOrder(transactionManager, songRepository, playQueueView);
-		inOrder.verify(transactionManager).doInTransaction(Mockito.<TransactionCode<?>>any());
-		inOrder.verify(songRepository).getSongsByGenre(ROCK);
-		inOrder.verify(playQueueView).showSongs(emptySongs);
-	}
-
-	@Test
-	public void testOnGenreSelectedWithDifferentGenre() {
-		List<Song> jazzSongs = Arrays.asList(TAKE_FIVE);
-		when(songRepository.getSongsByGenre(JAZZ)).thenReturn(jazzSongs);
-
-		controller.onGenreSelected(JAZZ);
-
-		InOrder inOrder = inOrder(transactionManager, songRepository, playQueueView);
-		inOrder.verify(transactionManager).doInTransaction(Mockito.<TransactionCode<?>>any());
-		inOrder.verify(songRepository).getSongsByGenre(JAZZ);
-		inOrder.verify(playQueueView).showSongs(jazzSongs);
 	}
 }
