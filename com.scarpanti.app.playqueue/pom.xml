@@ -17,6 +17,8 @@
     <pitest.version>1.5.2</pitest.version>
     <coveralls.version>4.5.0-M6</coveralls.version>
     <mockito.version>4.11.0</mockito.version>
+    
+    <sonar.coverage.exclusions>**/model/*.*</sonar.coverage.exclusions>
   </properties>
   
   <dependencies>
