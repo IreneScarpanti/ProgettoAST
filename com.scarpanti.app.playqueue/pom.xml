@@ -20,7 +20,8 @@
     <surefire-report.version>3.5.3</surefire-report.version>
     <hibernate.version>5.6.15.Final</hibernate.version>
     
-    <sonar.coverage.exclusions>**/model/*.*</sonar.coverage.exclusions>
+    <sonar.coverage.exclusions>**/model/*.*,**/entity/*.*</sonar.coverage.exclusions>
+    <sonar.cpd.exclusions>**/entity/**</sonar.cpd.exclusions>
     
     <sonar.junit.reportPaths>
       ${project.build.directory}/surefire-reports
