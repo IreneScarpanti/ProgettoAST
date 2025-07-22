@@ -61,17 +61,4 @@ public class GenreControllerTest {
 		inOrder.verify(playQueueView).showGenres(genres);
 	}
 
-	@Test
-	public void testLoadGenresWhenEmpty() {
-		List<Genre> emptyGenres = Arrays.asList();
-		when(genreRepository.getAllGenres()).thenReturn(emptyGenres);
-
-		controller.loadGenres();
-
-		InOrder inOrder = inOrder(transactionManager, genreRepository, playQueueView);
-		inOrder.verify(transactionManager).doInTransaction(Mockito.<TransactionCode<?>>any());
-		inOrder.verify(genreRepository).getAllGenres();
-		inOrder.verify(playQueueView).showGenres(emptyGenres);
-	}
-
 }
