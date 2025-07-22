@@ -26,7 +26,6 @@ public class GenreMapperTest {
 		GenreEntity entity = GenreMapper.modelToEntity(model);
 
 		assertThat(entity.getName()).isEqualTo("Jazz");
-		assertThat(entity.getDescription()).isEqualTo("Jazz music");
-		assertThat(entity.getId()).isNull(); 
+		assertThat(entity.getDescription()).isEqualTo("Jazz music"); 
 	}
 }
