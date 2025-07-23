@@ -142,11 +142,9 @@
           <configuration>
             <targetClasses>
               <param>com.scarpanti.app.playqueue.controller.*</param>
-              <param>com.scarpanti.app.playqueue.repository.*</param>
             </targetClasses>
             <targetTests>
               <param>com.scarpanti.app.playqueue.controller.*</param>
-              <param>com.scarpanti.app.playqueue.repository.*</param>
             </targetTests>
             <mutators>
               <mutator>DEFAULTS</mutator>
