@@ -45,6 +45,15 @@ public class JpaPlayQueueRepository implements PlayQueueRepository {
 
 	@Override
 	public void dequeue() {
+		TypedQuery<PlayQueueItemEntity> query = entityManager
+				.createQuery("SELECT pq FROM PlayQueueItemEntity pq ORDER BY pq.queueId", PlayQueueItemEntity.class)
+				.setMaxResults(1);
+
+		List<PlayQueueItemEntity> results = query.getResultList();
+		if (!results.isEmpty()) {
+			PlayQueueItemEntity firstItem = results.get(0);
+			entityManager.remove(firstItem);
+		}
 
 	}
 
