@@ -200,6 +200,27 @@ public class JpaPlayQueueRepositoryTest {
 		assertThat(queueItems.get(0).getSong().getId()).isEqualTo(stairwayToHeavenEntity.getId());
 	}
 
+	@Test
+	public void testOrderingMaintainedAfterRemoval() {
+		insertPlayQueueItemDirectly(bohemianRhapsodyEntity);
+		insertPlayQueueItemDirectly(stairwayToHeavenEntity);
+		insertPlayQueueItemDirectly(bohemianRhapsodyEntity);
+
+		em.getTransaction().begin();
+		playQueueRepository.remove(2L);
+		em.getTransaction().commit();
+
+		List<PlayQueueItemEntity> queueItems = em
+				.createQuery("SELECT pq FROM PlayQueueItemEntity pq ORDER BY pq.queueId", PlayQueueItemEntity.class)
+				.getResultList();
+
+		assertThat(queueItems).hasSize(2);
+		assertThat(queueItems.get(0).getQueueId()).isEqualTo(1L);
+		assertThat(queueItems.get(1).getQueueId()).isEqualTo(3L);
+		assertThat(queueItems.get(0).getSong().getId()).isEqualTo(bohemianRhapsodyEntity.getId());
+		assertThat(queueItems.get(1).getSong().getId()).isEqualTo(bohemianRhapsodyEntity.getId());
+	}
+
 	private void setupBaseEntities() {
 		em.getTransaction().begin();
 
