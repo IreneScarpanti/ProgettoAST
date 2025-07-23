@@ -8,6 +8,7 @@ import com.scarpanti.app.playqueue.repository.jpa.JpaPlayQueueRepository;
 import com.scarpanti.app.playqueue.repository.jpa.JpaSongRepository;
 import com.scarpanti.app.playqueue.transaction.TransactionCode;
 import com.scarpanti.app.playqueue.transaction.TransactionManager;
+import com.scarpanti.app.playqueue.transaction.exception.TransactionFailedException;
 
 public class JpaTransactionManager implements TransactionManager {
 
@@ -37,7 +38,7 @@ public class JpaTransactionManager implements TransactionManager {
 			if (entityManager.getTransaction().isActive()) {
 				entityManager.getTransaction().rollback();
 			}
-			throw new RuntimeException("Transaction failed", e);
+			throw new TransactionFailedException("Transaction failed", e);
 		} finally {
 			entityManager.close();
 		}
