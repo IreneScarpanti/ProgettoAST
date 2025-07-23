@@ -59,7 +59,8 @@ public class JpaPlayQueueRepository implements PlayQueueRepository {
 
 	@Override
 	public void remove(Long queueId) {
-
+		PlayQueueItemEntity entity = entityManager.getReference(PlayQueueItemEntity.class, queueId);
+		entityManager.remove(entity);
 	}
 
 	@Override

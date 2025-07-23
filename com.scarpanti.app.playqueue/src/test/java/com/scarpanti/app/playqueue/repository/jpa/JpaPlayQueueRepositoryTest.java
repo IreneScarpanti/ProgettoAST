@@ -182,6 +182,24 @@ public class JpaPlayQueueRepositoryTest {
 		assertThat(queueItems).isEmpty();
 	}
 
+	@Test
+	public void testRemove() {
+		insertPlayQueueItemDirectly(bohemianRhapsodyEntity);
+		insertPlayQueueItemDirectly(stairwayToHeavenEntity);
+
+		em.getTransaction().begin();
+		playQueueRepository.remove(1L);
+		em.getTransaction().commit();
+
+		List<PlayQueueItemEntity> queueItems = em
+				.createQuery("SELECT pq FROM PlayQueueItemEntity pq ORDER BY pq.queueId", PlayQueueItemEntity.class)
+				.getResultList();
+
+		assertThat(queueItems).hasSize(1);
+		assertThat(queueItems.get(0).getQueueId()).isEqualTo(2L);
+		assertThat(queueItems.get(0).getSong().getId()).isEqualTo(stairwayToHeavenEntity.getId());
+	}
+
 	private void setupBaseEntities() {
 		em.getTransaction().begin();
 
