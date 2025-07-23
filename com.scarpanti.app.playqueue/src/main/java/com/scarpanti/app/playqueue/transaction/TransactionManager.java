@@ -2,6 +2,6 @@ package com.scarpanti.app.playqueue.transaction;
 
 public interface TransactionManager {
 
-	<T> T doInTransaction(TransactionCode<?> any);
+	<T> T doInTransaction(TransactionCode<T> any);
 
 }
