@@ -65,7 +65,7 @@ public class JpaPlayQueueRepository implements PlayQueueRepository {
 
 	@Override
 	public void clear() {
-
+		entityManager.createQuery("DELETE FROM PlayQueueItemEntity").executeUpdate();
 	}
 
 }

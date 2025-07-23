@@ -221,6 +221,21 @@ public class JpaPlayQueueRepositoryTest {
 		assertThat(queueItems.get(1).getSong().getId()).isEqualTo(bohemianRhapsodyEntity.getId());
 	}
 
+	@Test
+	public void testClear() {
+		insertPlayQueueItemDirectly(bohemianRhapsodyEntity);
+		insertPlayQueueItemDirectly(stairwayToHeavenEntity);
+
+		em.getTransaction().begin();
+		playQueueRepository.clear();
+		em.getTransaction().commit();
+
+		List<PlayQueueItemEntity> queueItems = em
+				.createQuery("SELECT pq FROM PlayQueueItemEntity pq", PlayQueueItemEntity.class).getResultList();
+
+		assertThat(queueItems).isEmpty();
+	}
+
 	private void setupBaseEntities() {
 		em.getTransaction().begin();
 
