@@ -3,6 +3,7 @@ package com.scarpanti.app.playqueue.repository.jpa;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -94,6 +95,61 @@ public class JpaPlayQueueRepositoryTest {
 		assertThat(songs).hasSize(2);
 		assertThat(songs.keySet()).containsExactly(1L, 2L);
 		assertThat(songs.values()).containsExactly(bohemianRhapsody, stairwayToHeaven);
+	}
+
+	@Test
+	public void testEnqueue() {
+		Song bohemianRhapsody = createSongFromEntity(bohemianRhapsodyEntity);
+
+		em.getTransaction().begin();
+		playQueueRepository.enqueue(bohemianRhapsody);
+		em.getTransaction().commit();
+
+		List<PlayQueueItemEntity> queueItems = em
+				.createQuery("SELECT pq FROM PlayQueueItemEntity pq", PlayQueueItemEntity.class).getResultList();
+
+		assertThat(queueItems).hasSize(1);
+		assertThat(queueItems.get(0).getSong().getId()).isEqualTo(bohemianRhapsody.getId());
+		assertThat(queueItems.get(0).getQueueId()).isEqualTo(1L);
+	}
+
+	@Test
+	public void testEnqueueMaintainsFIFOOrder() {
+		Song bohemianRhapsody = createSongFromEntity(bohemianRhapsodyEntity);
+		Song stairwayToHeaven = createSongFromEntity(stairwayToHeavenEntity);
+
+		em.getTransaction().begin();
+		playQueueRepository.enqueue(bohemianRhapsody);
+		playQueueRepository.enqueue(stairwayToHeaven);
+		em.getTransaction().commit();
+
+		List<PlayQueueItemEntity> queueItems = em
+				.createQuery("SELECT pq FROM PlayQueueItemEntity pq ORDER BY pq.queueId", PlayQueueItemEntity.class)
+				.getResultList();
+
+		assertThat(queueItems).hasSize(2);
+		assertThat(queueItems.get(0).getQueueId()).isEqualTo(1L);
+		assertThat(queueItems.get(1).getQueueId()).isEqualTo(2L);
+	}
+
+	@Test
+	public void testEnqueueSameSongTwice() {
+		Song bohemianRhapsody = createSongFromEntity(bohemianRhapsodyEntity);
+
+		em.getTransaction().begin();
+		playQueueRepository.enqueue(bohemianRhapsody);
+		playQueueRepository.enqueue(bohemianRhapsody);
+		em.getTransaction().commit();
+
+		List<PlayQueueItemEntity> queueItems = em
+				.createQuery("SELECT pq FROM PlayQueueItemEntity pq ORDER BY pq.queueId", PlayQueueItemEntity.class)
+				.getResultList();
+
+		assertThat(queueItems).hasSize(2);
+		assertThat(queueItems.get(0).getQueueId()).isEqualTo(1L);
+		assertThat(queueItems.get(1).getQueueId()).isEqualTo(2L);
+		assertThat(queueItems.get(0).getSong().getId()).isEqualTo(bohemianRhapsody.getId());
+		assertThat(queueItems.get(1).getSong().getId()).isEqualTo(bohemianRhapsody.getId());
 	}
 
 	private void setupBaseEntities() {

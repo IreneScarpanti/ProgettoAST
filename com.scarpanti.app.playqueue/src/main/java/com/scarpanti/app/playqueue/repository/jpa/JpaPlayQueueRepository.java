@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import com.scarpanti.app.playqueue.entity.PlayQueueItemEntity;
+import com.scarpanti.app.playqueue.entity.SongEntity;
 import com.scarpanti.app.playqueue.mapper.SongMapper;
 import com.scarpanti.app.playqueue.model.Song;
 import com.scarpanti.app.playqueue.repository.PlayQueueRepository;
@@ -37,7 +38,9 @@ public class JpaPlayQueueRepository implements PlayQueueRepository {
 
 	@Override
 	public void enqueue(Song song) {
-
+		SongEntity songEntity = entityManager.getReference(SongEntity.class, song.getId());
+		PlayQueueItemEntity queueItem = new PlayQueueItemEntity(songEntity);
+		entityManager.persist(queueItem);
 	}
 
 	@Override
