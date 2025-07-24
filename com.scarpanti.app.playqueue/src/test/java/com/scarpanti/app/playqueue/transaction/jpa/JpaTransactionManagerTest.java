@@ -2,12 +2,15 @@ package com.scarpanti.app.playqueue.transaction.jpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 import org.junit.After;
@@ -106,6 +109,26 @@ public class JpaTransactionManagerTest {
 
 		long finalCount = countQueueItemsDirectly();
 		assertThat(finalCount).isEqualTo(initialCount);
+	}
+
+	@Test
+	public void testHandleExceptionWhenTransactionNotActive() {
+		EntityManagerFactory mockEmf = mock(EntityManagerFactory.class);
+		EntityManager mockEm = mock(EntityManager.class);
+		EntityTransaction mockTransaction = mock(EntityTransaction.class);
+
+		when(mockEmf.createEntityManager()).thenReturn(mockEm);
+		when(mockEm.getTransaction()).thenReturn(mockTransaction);
+		when(mockTransaction.isActive()).thenReturn(false);
+
+		JpaTransactionManager mockTransactionManager = new JpaTransactionManager(mockEmf);
+
+		assertThatThrownBy(() -> mockTransactionManager.doInTransaction((genreRepo, songRepo, queueRepo) -> {
+			throw new RuntimeException("Test exception");
+		})).isInstanceOf(RuntimeException.class).hasMessage("Transaction failed");
+
+		org.mockito.Mockito.verify(mockTransaction, org.mockito.Mockito.never()).rollback();
+		org.mockito.Mockito.verify(mockEm).close();
 	}
 
 	private void setupTestData() {
