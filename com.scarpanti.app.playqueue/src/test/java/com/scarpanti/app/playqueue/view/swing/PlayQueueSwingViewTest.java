@@ -168,4 +168,81 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(playQueueController).onSongSelected(song);
 	}
 
+	@Test
+	@GUITest
+	public void testRemoveSelectedButtonEnabledWhenQueueSongSelected() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song1 = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		Song song2 = new Song(2L, "Stairway to Heaven", "Led Zeppelin", 482, rock);
+		Map<Long, Song> queueMap = new LinkedHashMap<>();
+		queueMap.put(1L, song1);
+		queueMap.put(2L, song2);
+		GuiActionRunner.execute(() -> {
+			view.showQueue(queueMap);
+		});
+		window.list("playQueueList").selectItem(0);
+		window.button("removeSelectedButton").requireEnabled();
+	}
+
+	@Test
+	@GUITest
+	public void testRemoveSelectedButtonDisabledWhenNoQueueSongSelected() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song1 = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		Map<Long, Song> queueMap = new LinkedHashMap<>();
+		queueMap.put(1L, song1);
+		GuiActionRunner.execute(() -> {
+			view.showQueue(queueMap);
+		});
+		window.list("playQueueList").clearSelection();
+		window.button("removeSelectedButton").requireDisabled();
+	}
+
+	@Test
+	@GUITest
+	public void testRemoveSelectedButtonCallsPlayQueueController() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song1 = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		Song song2 = new Song(2L, "Stairway to Heaven", "Led Zeppelin", 482, rock);
+		Map<Long, Song> queueMap = new LinkedHashMap<>();
+		queueMap.put(1L, song1);
+		queueMap.put(2L, song2);
+		GuiActionRunner.execute(() -> {
+			view.showQueue(queueMap);
+		});
+		window.list("playQueueList").selectItem(0);
+		window.button("removeSelectedButton").click();
+		verify(playQueueController).onSongRemoved(1L);
+	}
+
+	@Test
+	@GUITest
+	public void testRemoveSelectedButtonDisablesWhenDeselected() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		Map<Long, Song> queueMap = new LinkedHashMap<>();
+		queueMap.put(1L, song);
+		GuiActionRunner.execute(() -> view.showQueue(queueMap));
+		window.list("playQueueList").selectItem(0);
+		window.button("removeSelectedButton").requireEnabled();
+		window.list("playQueueList").clearSelection();
+		window.button("removeSelectedButton").requireDisabled();
+	}
+
+	@Test
+	@GUITest
+	public void testRemoveSelectedButtonCallsControllerWithCorrectQueueIdWhenDuplicateSongsPresent() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song duplicateSong = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		Map<Long, Song> queueMap = new LinkedHashMap<>();
+		queueMap.put(10L, duplicateSong);
+		queueMap.put(20L, duplicateSong);
+		GuiActionRunner.execute(() -> {
+			view.showQueue(queueMap);
+		});
+		window.list("playQueueList").selectItem(1);
+		window.button("removeSelectedButton").click();
+		verify(playQueueController).onSongRemoved(20L);
+	}
+
 }

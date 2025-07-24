@@ -116,6 +116,12 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		removeSelectedButton = new JButton("Remove Selected");
 		removeSelectedButton.setName("removeSelectedButton");
 		removeSelectedButton.setEnabled(false);
+		removeSelectedButton.addActionListener(e -> {
+			Song selectedSong = playQueueList.getSelectedValue();
+			Long queueId = songToQueueIdMap.get(selectedSong);
+			playQueueController.onSongRemoved(queueId);
+		});
+
 		GridBagConstraints gbc_removeSelectedButton = new GridBagConstraints();
 		gbc_removeSelectedButton.fill = GridBagConstraints.BOTH;
 		gbc_removeSelectedButton.gridx = 1;
@@ -133,6 +139,7 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		gbc_cleanQueueButton.gridwidth = 1;
 		gbc_cleanQueueButton.insets = new Insets(40, 0, 0, 0);
 		playQueueButtonPanel.add(cleanQueueButton, gbc_cleanQueueButton);
+		playQueueList.addListSelectionListener(arg0 -> checkButtonsEnabled());
 
 		JLabel lblMusicLibrary = new JLabel("Music Library");
 		GridBagConstraints gbc_lblMusicLibrary = new GridBagConstraints();
