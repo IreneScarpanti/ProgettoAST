@@ -78,6 +78,12 @@
         <artifactId>logback-classic</artifactId>
         <version>${logback.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-swing-junit</artifactId>
+      <version>${assertj.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   
    <build>
