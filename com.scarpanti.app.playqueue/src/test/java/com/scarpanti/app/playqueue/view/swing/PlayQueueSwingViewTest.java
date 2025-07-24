@@ -284,4 +284,58 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(playQueueController).onPlayNext();
 	}
 
+	@Test
+	@GUITest
+	public void testCleanQueueButtonEnabledWhenQueueNotEmpty() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song1 = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		Song song2 = new Song(2L, "Stairway to Heaven", "Led Zeppelin", 482, rock);
+		Map<Long, Song> queueMap = new LinkedHashMap<>();
+		queueMap.put(1L, song1);
+		queueMap.put(2L, song2);
+		GuiActionRunner.execute(() -> {
+			view.showQueue(queueMap);
+		});
+		window.button("cleanQueueButton").requireEnabled();
+	}
+
+	@Test
+	@GUITest
+	public void testCleanQueuetButtonEnabledWhenQueueEmpty() {
+		Map<Long, Song> emptyQueue = new LinkedHashMap<>();
+		GuiActionRunner.execute(() -> {
+			view.showQueue(emptyQueue);
+		});
+		window.button("cleanQueueButton").requireDisabled();
+	}
+
+	@Test
+	@GUITest
+	public void testCleanQueueButtonCallsController() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		Map<Long, Song> queueMap = new LinkedHashMap<>();
+		queueMap.put(1L, song);
+		GuiActionRunner.execute(() -> {
+			view.showQueue(queueMap);
+		});
+		window.button("cleanQueueButton").click();
+		verify(playQueueController).clearQueue();
+	}
+
+	@Test
+	@GUITest
+	public void testButtonsDisabledWhenPlayQueueBecomesEmpty() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		Map<Long, Song> nonEmptyQueue = new LinkedHashMap<>();
+		nonEmptyQueue.put(1L, song);
+		GuiActionRunner.execute(() -> view.showQueue(nonEmptyQueue));
+		window.button("playNextButton").requireEnabled();
+		window.button("cleanQueueButton").requireEnabled();
+		Map<Long, Song> emptyQueue = new LinkedHashMap<>();
+		GuiActionRunner.execute(() -> view.showQueue(emptyQueue));
+		window.button("playNextButton").requireDisabled();
+		window.button("cleanQueueButton").requireDisabled();
+	}
 }

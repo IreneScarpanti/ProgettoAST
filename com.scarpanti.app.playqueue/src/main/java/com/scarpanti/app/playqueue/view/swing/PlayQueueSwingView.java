@@ -132,13 +132,14 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		cleanQueueButton = new JButton("Clean");
 		cleanQueueButton.setName("cleanQueueButton");
 		cleanQueueButton.setEnabled(false);
+		cleanQueueButton.addActionListener(e -> playQueueController.clearQueue());
 
 		GridBagConstraints gbc_cleanQueueButton = new GridBagConstraints();
 		gbc_cleanQueueButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cleanQueueButton.gridx = 1;
 		gbc_cleanQueueButton.gridy = 1;
 		gbc_cleanQueueButton.gridwidth = 1;
-		gbc_cleanQueueButton.insets = new Insets(40, 0, 0, 0);
+		gbc_cleanQueueButton.insets = new Insets(40, 0, 20, 0);
 		playQueueButtonPanel.add(cleanQueueButton, gbc_cleanQueueButton);
 		playQueueList.addListSelectionListener(arg0 -> checkButtonsEnabled());
 
