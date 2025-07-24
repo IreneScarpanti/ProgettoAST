@@ -20,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.scarpanti.app.playqueue.controller.GenreController;
 import com.scarpanti.app.playqueue.controller.PlayQueueController;
+import com.scarpanti.app.playqueue.controller.SongController;
 import com.scarpanti.app.playqueue.model.Genre;
 import com.scarpanti.app.playqueue.model.Song;
 
@@ -28,6 +29,9 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Mock
 	private GenreController genreController;
+
+	@Mock
+	private SongController songController;
 
 	@Mock
 	private PlayQueueController playQueueController;
@@ -42,6 +46,7 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(() -> {
 			view = new PlayQueueSwingView();
 			view.setGenreController(genreController);
+			view.setSongController(songController);
 			view.setPlayQueueController(playQueueController);
 			return view;
 		});
@@ -113,6 +118,54 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 			view.showQueue(queueMap);
 		});
 		assertThat(window.list("playQueueList").contents()).containsExactly(song1.toString(), song2.toString());
+	}
+
+	@Test
+	@GUITest
+	public void testGenreSelectionCallsSongController() {
+		Genre rock = new Genre("Rock", "Rock music");
+		GuiActionRunner.execute(() -> {
+			view.showGenres(Arrays.asList(rock));
+		});
+		window.list("genreList").selectItem(0);
+		verify(songController).onGenreSelected(rock);
+	}
+
+	@Test
+	@GUITest
+	public void testAddToPlayQueueButtonEnabledWhenSongSelected() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		GuiActionRunner.execute(() -> {
+			view.showSongs(Arrays.asList(song));
+		});
+		window.list("songList").selectItem(0);
+		window.button("addToPlayQueueButton").requireEnabled();
+	}
+
+	@Test
+	@GUITest
+	public void testAddToPlayQueueButtonDisablesWhenDeselected() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		GuiActionRunner.execute(() -> view.showSongs(Arrays.asList(song)));
+		window.list("songList").selectItem(0);
+		window.button("addToPlayQueueButton").requireEnabled();
+		window.list("songList").clearSelection();
+		window.button("addToPlayQueueButton").requireDisabled();
+	}
+
+	@Test
+	@GUITest
+	public void testAddToPlayQueueButtonCallsPlayQueueController() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		GuiActionRunner.execute(() -> {
+			view.showSongs(Arrays.asList(song));
+		});
+		window.list("songList").selectItem(0);
+		window.button("addToPlayQueueButton").click();
+		verify(playQueueController).onSongSelected(song);
 	}
 
 }

@@ -21,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.scarpanti.app.playqueue.controller.GenreController;
 import com.scarpanti.app.playqueue.controller.PlayQueueController;
+import com.scarpanti.app.playqueue.controller.SongController;
 import com.scarpanti.app.playqueue.model.Genre;
 import com.scarpanti.app.playqueue.model.Song;
 import com.scarpanti.app.playqueue.view.PlayQueueView;
@@ -46,6 +47,8 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 	private JButton addToQueueButton;
 	private JScrollPane songScrollPane;
 
+	private transient PlayQueueController playQueueController;
+	private transient SongController songController;
 	private transient Map<Song, Long> songToQueueIdMap;
 
 	public PlayQueueSwingView() {
@@ -157,6 +160,12 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		gbc_genreScrollPane.gridx = 1;
 		gbc_genreScrollPane.gridy = 2;
 		contentPane.add(genreScrollPane, gbc_genreScrollPane);
+		genreList.addListSelectionListener(e -> {
+			if (!e.getValueIsAdjusting()) {
+				Genre selectedGenre = genreList.getSelectedValue();
+				songController.onGenreSelected(selectedGenre);
+			}
+		});
 
 		JLabel lblSongs = new JLabel("Songs:");
 		GridBagConstraints gbc_lblSongs = new GridBagConstraints();
@@ -183,15 +192,36 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		addToQueueButton = new JButton("Add to Queue");
 		addToQueueButton.setName("addToPlayQueueButton");
 		addToQueueButton.setEnabled(false);
+		addToQueueButton.addActionListener(e -> {
+			Song selectedSong = songList.getSelectedValue();
+			playQueueController.onSongSelected(selectedSong);
+		});
 		songPanel.add(addToQueueButton, BorderLayout.SOUTH);
+		songList.addListSelectionListener(arg0 -> checkButtonsEnabled());
+
 	}
 
 	public void setGenreController(GenreController genreController) {
 		genreController.loadGenres();
 	}
 
+	public void setSongController(SongController songController) {
+		this.songController = songController;
+	}
+
 	public void setPlayQueueController(PlayQueueController playQueueController) {
-		playQueueController.getPlayQueue();
+		this.playQueueController = playQueueController;
+		this.playQueueController.getPlayQueue();
+	}
+
+	private void checkButtonsEnabled() {
+		boolean songSelected = songList.getSelectedValue() != null;
+		addToQueueButton.setEnabled(songSelected);
+		boolean queueSongSelected = playQueueList.getSelectedValue() != null;
+		removeSelectedButton.setEnabled(queueSongSelected);
+		boolean queueNotEmpty = playQueueListModel.getSize() > 0;
+		playNextButton.setEnabled(queueNotEmpty);
+		cleanQueueButton.setEnabled(queueNotEmpty);
 	}
 
 	@Override
