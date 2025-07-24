@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +46,10 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 	private JButton addToQueueButton;
 	private JScrollPane songScrollPane;
 
+	private transient Map<Song, Long> songToQueueIdMap;
 
 	public PlayQueueSwingView() {
+		songToQueueIdMap = new HashMap<>();
 		setTitle("PlayQueue");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
@@ -193,16 +196,28 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 
 	@Override
 	public void showGenres(List<Genre> genres) {
+		genreListModel.clear();
+		genres.forEach(genreListModel::addElement);
 
 	}
 
 	@Override
 	public void showSongs(List<Song> songs) {
+		songListModel.clear();
+		songs.forEach(songListModel::addElement);
 
 	}
 
 	@Override
 	public void showQueue(Map<Long, Song> songs) {
+		playQueueListModel.clear();
+		songToQueueIdMap.clear();
+		for (Map.Entry<Long, Song> entry : songs.entrySet()) {
+			Song song = entry.getValue();
+			Long queueId = entry.getKey();
+			playQueueListModel.addElement(song);
+			songToQueueIdMap.put(song, queueId);
+		}
 
 	}
 }
