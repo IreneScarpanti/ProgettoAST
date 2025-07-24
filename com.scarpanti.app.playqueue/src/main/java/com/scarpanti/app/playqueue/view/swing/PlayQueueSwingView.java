@@ -106,6 +106,7 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 		playNextButton = new JButton("Play Next");
 		playNextButton.setName("playNextButton");
 		playNextButton.setEnabled(false);
+		playNextButton.addActionListener(e -> playQueueController.onPlayNext());
 		GridBagConstraints gbc_playNextButton = new GridBagConstraints();
 		gbc_playNextButton.fill = GridBagConstraints.BOTH;
 		gbc_playNextButton.insets = new Insets(0, 0, 0, 5);
@@ -255,6 +256,7 @@ public class PlayQueueSwingView extends JFrame implements PlayQueueView {
 			playQueueListModel.addElement(song);
 			songToQueueIdMap.put(song, queueId);
 		}
+		checkButtonsEnabled();
 
 	}
 }

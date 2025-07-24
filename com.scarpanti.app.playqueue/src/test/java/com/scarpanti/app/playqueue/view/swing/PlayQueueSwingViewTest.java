@@ -245,4 +245,43 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(playQueueController).onSongRemoved(20L);
 	}
 
+	@Test
+	@GUITest
+	public void testPlayNextButtonEnabledWhenQueueNotEmpty() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song1 = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		Song song2 = new Song(2L, "Stairway to Heaven", "Led Zeppelin", 482, rock);
+		Map<Long, Song> queueMap = new LinkedHashMap<>();
+		queueMap.put(1L, song1);
+		queueMap.put(2L, song2);
+		GuiActionRunner.execute(() -> {
+			view.showQueue(queueMap);
+		});
+		window.button("playNextButton").requireEnabled();
+	}
+
+	@Test
+	@GUITest
+	public void testPlayNextButtonDisabledWhenQueueEmpty() {
+		Map<Long, Song> emptyQueue = new LinkedHashMap<>();
+		GuiActionRunner.execute(() -> {
+			view.showQueue(emptyQueue);
+		});
+		window.button("playNextButton").requireDisabled();
+	}
+
+	@Test
+	@GUITest
+	public void testPlayNextButtonCallsPlayQueueController() {
+		Genre rock = new Genre("Rock", "Rock music");
+		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
+		Map<Long, Song> queueMap = new LinkedHashMap<>();
+		queueMap.put(1L, song);
+		GuiActionRunner.execute(() -> {
+			view.showQueue(queueMap);
+		});
+		window.button("playNextButton").click();
+		verify(playQueueController).onPlayNext();
+	}
+
 }
