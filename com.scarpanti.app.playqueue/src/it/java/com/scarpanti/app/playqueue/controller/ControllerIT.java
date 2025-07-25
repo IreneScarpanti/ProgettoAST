@@ -29,6 +29,24 @@ import com.scarpanti.app.playqueue.view.PlayQueueView;
 
 public class ControllerIT {
 
+	private static final String DB_NAME = "playqueue-test";
+
+	private static final String ROCK_NAME = "Rock";
+	private static final String ROCK_DESCRIPTION = "Rock music";
+	private static final String JAZZ_NAME = "Jazz";
+	private static final String JAZZ_DESCRIPTION = "Jazz music";
+
+	private static final String BOHEMIAN_RHAPSODY_TITLE = "Bohemian Rhapsody";
+	private static final String QUEEN_ARTIST = "Queen";
+	private static final int BOHEMIAN_RHAPSODY_DURATION = 354;
+
+	private static final String STAIRWAY_TO_HEAVEN_TITLE = "Stairway To Heaven";
+	private static final String LED_ZEPPELIN_ARTIST = "Led Zeppelin";
+	private static final int STAIRWAY_TO_HEAVEN_DURATION = 482;
+
+	private static final String TAKE_FIVE_TITLE = "Take Five";
+	private static final String DAVE_BRUBECK_ARTIST = "Dave Brubeck";
+	private static final int TAKE_FIVE_DURATION = 324;
 	@Mock
 	private PlayQueueView playQueueView;
 
@@ -62,7 +80,7 @@ public class ControllerIT {
 		properties.put("hibernate.hbm2ddl.auto", "create-drop");
 		properties.put("hibernate.show_sql", "false");
 
-		entityManagerFactory = Persistence.createEntityManagerFactory("playqueue-test", properties);
+		entityManagerFactory = Persistence.createEntityManagerFactory(DB_NAME, properties);
 		transactionManager = new JpaTransactionManager(entityManagerFactory);
 
 		genreController = new GenreController(transactionManager, playQueueView);
@@ -179,27 +197,33 @@ public class ControllerIT {
 		try {
 			em.getTransaction().begin();
 
-			GenreEntity rockEntity = new GenreEntity("Rock", "Rock music");
-			GenreEntity jazzEntity = new GenreEntity("Jazz", "Jazz music");
+			GenreEntity rockEntity = new GenreEntity(ROCK_NAME, ROCK_DESCRIPTION);
+			GenreEntity jazzEntity = new GenreEntity(JAZZ_NAME, JAZZ_DESCRIPTION);
 			em.persist(rockEntity);
 			em.persist(jazzEntity);
 
-			SongEntity song1 = new SongEntity("Bohemian Rhapsody", "Queen", 354, rockEntity);
-			SongEntity song2 = new SongEntity("Stairway To Heaven", "Led Zeppelin", 482, rockEntity);
-			SongEntity song3 = new SongEntity("Take Five", "Dave Brubeck", 324, jazzEntity);
+			SongEntity bohemianRhapsodyEntity = new SongEntity(BOHEMIAN_RHAPSODY_TITLE, QUEEN_ARTIST, 
+					BOHEMIAN_RHAPSODY_DURATION, rockEntity);
+			SongEntity stairwayToHeavenEntity = new SongEntity(STAIRWAY_TO_HEAVEN_TITLE, LED_ZEPPELIN_ARTIST, 
+					STAIRWAY_TO_HEAVEN_DURATION, rockEntity);
+			SongEntity takeFiveEntity = new SongEntity(TAKE_FIVE_TITLE, DAVE_BRUBECK_ARTIST, 
+					TAKE_FIVE_DURATION, jazzEntity);
 
-			em.persist(song1);
-			em.persist(song2);
-			em.persist(song3);
+			em.persist(bohemianRhapsodyEntity);
+			em.persist(stairwayToHeavenEntity);
+			em.persist(takeFiveEntity);
 
 			em.getTransaction().commit();
 
-			rockGenre = new Genre("Rock", "Rock music");
-			jazzGenre = new Genre("Jazz", "Jazz music");
+			rockGenre = new Genre(ROCK_NAME, ROCK_DESCRIPTION);
+			jazzGenre = new Genre(JAZZ_NAME, JAZZ_DESCRIPTION);
 
-			bohemianRhapsody = new Song(song1.getId(), "Bohemian Rhapsody", "Queen", 354, rockGenre);
-			stairwayToHeaven = new Song(song2.getId(), "Stairway To Heaven", "Led Zeppelin", 482, rockGenre);
-			takeFive = new Song(song3.getId(), "Take Five", "Dave Brubeck", 324, jazzGenre);
+			bohemianRhapsody = new Song(bohemianRhapsodyEntity.getId(), BOHEMIAN_RHAPSODY_TITLE, QUEEN_ARTIST, 
+					BOHEMIAN_RHAPSODY_DURATION, rockGenre);
+			stairwayToHeaven = new Song(stairwayToHeavenEntity.getId(), STAIRWAY_TO_HEAVEN_TITLE, LED_ZEPPELIN_ARTIST, 
+					STAIRWAY_TO_HEAVEN_DURATION, rockGenre);
+			takeFive = new Song(takeFiveEntity.getId(), TAKE_FIVE_TITLE, DAVE_BRUBECK_ARTIST, 
+					TAKE_FIVE_DURATION, jazzGenre);
 		} finally {
 			em.close();
 		}
