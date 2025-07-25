@@ -28,6 +28,11 @@
     <sonar.coverage.exclusions>**/model/*.*,**/entity/*.*,**/view/swing/*.*</sonar.coverage.exclusions>
     <sonar.cpd.exclusions>**/entity/**</sonar.cpd.exclusions>
     
+    <sonar.tests>
+      ${project.basedir}/src/test/java,
+      ${project.basedir}/src/it/java
+    </sonar.tests>
+    
     <sonar.junit.reportPaths>
       ${project.build.directory}/surefire-reports
     </sonar.junit.reportPaths>
