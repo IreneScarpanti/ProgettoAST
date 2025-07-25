@@ -22,6 +22,8 @@
     <testcontainers.version>1.21.0</testcontainers.version>
     <mysql.version>8.0.33</mysql.version>
     <logback.version>1.2.13</logback.version>
+    <buildhelper.version>3.6.0</buildhelper.version>
+    <failsafe.version>3.5.2</failsafe.version>
     
     <sonar.coverage.exclusions>**/model/*.*,**/entity/*.*,**/view/swing/*.*</sonar.coverage.exclusions>
     <sonar.cpd.exclusions>**/entity/**</sonar.cpd.exclusions>
@@ -195,6 +197,38 @@
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${buildhelper.version}</version>
+        <executions>
+          <execution>
+            <id>add-test-source</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/it/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${failsafe.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
    </build>
