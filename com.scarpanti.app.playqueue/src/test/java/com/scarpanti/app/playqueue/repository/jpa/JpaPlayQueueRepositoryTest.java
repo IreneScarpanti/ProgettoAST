@@ -53,9 +53,6 @@ public class JpaPlayQueueRepositoryTest {
 		properties.put("javax.persistence.jdbc.user", mysql.getUsername());
 		properties.put("javax.persistence.jdbc.password", mysql.getPassword());
 		properties.put("javax.persistence.jdbc.driver", "com.mysql.cj.jdbc.Driver");
-		properties.put("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
-		properties.put("hibernate.hbm2ddl.auto", "create-drop");
-		properties.put("hibernate.show_sql", "true");
 
 		emf = Persistence.createEntityManagerFactory("playqueue-test", properties);
 		em = emf.createEntityManager();
