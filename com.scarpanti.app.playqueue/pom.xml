@@ -24,6 +24,8 @@
     <logback.version>1.2.13</logback.version>
     <buildhelper.version>3.6.0</buildhelper.version>
     <failsafe.version>3.5.2</failsafe.version>
+    <picocli.version>4.7.7</picocli.version>
+    <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
     
     <sonar.coverage.exclusions>**/model/*.*,**/entity/*.*,**/view/swing/*.*</sonar.coverage.exclusions>
     <sonar.cpd.exclusions>**/entity/**</sonar.cpd.exclusions>
@@ -93,7 +95,6 @@
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>${mysql.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
@@ -117,6 +118,11 @@
       <artifactId>assertj-swing-junit</artifactId>
       <version>${assertj.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>${picocli.version}</version>
     </dependency>
   </dependencies>
   
@@ -217,6 +223,7 @@
             <configuration>
               <sources>
                 <source>src/it/java</source>
+                <source>src/e2e/java</source>
               </sources>
             </configuration>
           </execution>
@@ -227,13 +234,39 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>${failsafe.version}</version>
         <executions>
-          <execution>
+        <execution>
+            <id>default-it</id>
             <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
             </goals>
-          </execution>
-        </executions>
+        </execution>
+        <execution>
+            <id>e2e-tests</id>
+            <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+            </goals>
+            <configuration>
+                <excludes>
+                    <exclude>**/*IT.java</exclude>
+                </excludes>
+                <includes>
+                    <include>**/*E2E.java</include>
+                </includes>
+            </configuration>
+        </execution>
+       </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin.version}</version>
+        <configuration>
+           <mainClass>com.scarpanti.app.playqueue.app.swing.PlayQueueSwingApp</mainClass>
+           <includeProjectDependencies>true</includeProjectDependencies>
+           <includePluginDependencies>true</includePluginDependencies>
+        </configuration>
       </plugin>
     </plugins>
    </build>
