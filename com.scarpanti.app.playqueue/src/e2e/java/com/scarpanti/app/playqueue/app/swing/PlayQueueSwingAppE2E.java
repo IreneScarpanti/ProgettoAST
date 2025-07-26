@@ -3,6 +3,7 @@ package com.scarpanti.app.playqueue.app.swing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
+import java.awt.Point;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -96,8 +97,7 @@ public class PlayQueueSwingAppE2E extends AssertJSwingJUnitTestCase {
 				return "PlayQueue".equals(frame.getTitle()) && frame.isShowing();
 			}
 		}).using(robot());
-
-		window.maximize();
+		window.moveTo(new Point(0, 0));
 	}
 
 	@Override
