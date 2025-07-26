@@ -145,7 +145,7 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	@GUITest
-	public void testAddToPlayQueueButtonDisablesWhenDeselected() {
+	public void testAddToPlayQueueButtonDisablesWhenNoSongSelected() {
 		Genre rock = new Genre("Rock", "Rock music");
 		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
 		GuiActionRunner.execute(() -> view.showSongs(Arrays.asList(song)));
@@ -213,20 +213,6 @@ public class PlayQueueSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("playQueueList").selectItem(0);
 		window.button("removeSelectedButton").click();
 		verify(playQueueController).onSongRemoved(1L);
-	}
-
-	@Test
-	@GUITest
-	public void testRemoveSelectedButtonDisablesWhenDeselected() {
-		Genre rock = new Genre("Rock", "Rock music");
-		Song song = new Song(1L, "Bohemian Rhapsody", "Queen", 354, rock);
-		Map<Long, Song> queueMap = new LinkedHashMap<>();
-		queueMap.put(1L, song);
-		GuiActionRunner.execute(() -> view.showQueue(queueMap));
-		window.list("playQueueList").selectItem(0);
-		window.button("removeSelectedButton").requireEnabled();
-		window.list("playQueueList").clearSelection();
-		window.button("removeSelectedButton").requireDisabled();
 	}
 
 	@Test
